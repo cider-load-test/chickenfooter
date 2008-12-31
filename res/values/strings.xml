@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, ChickenFooter</string>
+    <string name="no_games">There are no games yet!</string>
+    <string name="new_game">New game</string>
+    <string name="no_players">There are no players yet!</string>
+    <string name="new_player">New player</string>
+    <string name="no_scores">No scores for this player yet.</string>
+    <string name="name">Name:</string>
+    <string name="score">Score:</string>    
+    <string name="confirm">Save</string>
+    <string name="add_score">Add score</string>
+    <string name="done">Done</string>
     <string name="app_name">ChickenFooter</string>
 </resources>
