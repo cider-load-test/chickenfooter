@@ -55,6 +55,24 @@ public class ChickenDatabase {
 		return mDb.insert("games", null, values);
 	}
 
+    public boolean deleteGame(long gameId) {
+    	Cursor c;
+    	long playerId;
+    	if (mDb.delete("games", "_id = " + gameId, null) > 0) {
+    		// delete players associated with this game
+    		c = mDb.query("players", new String[] { "_id" }, 
+    				"game_id = " + gameId, null, null, null, null);
+    		for (int i = 0; i < c.getCount(); i++) {
+    			c.moveToPosition(i);
+    			playerId = c.getLong(0);
+    			mDb.delete("scores", "player_id = " + playerId, null);
+    		}
+    		mDb.delete("players", "game_id = " + gameId, null);
+    		return true;
+    	}
+    	return false;
+    }
+    
 	public Cursor fetchAllGames() {
 		return mDb.query("games", new String[] { "_id", "created_at" },
 				null, null, null, null, "_id");
@@ -101,7 +119,10 @@ public class ChickenDatabase {
 		values.put("value", value);
 		values.put("player_id", playerId);
 
-		return mDb.insert("scores", null, values);
+		long retval = mDb.insert("scores", null, values);
+		if (retval >= 0)
+			addToPlayerScore(playerId, value);
+		return retval;
 	}
 	
 	public Cursor fetchAllScores(Long playerId) {

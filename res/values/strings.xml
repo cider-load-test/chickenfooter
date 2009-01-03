@@ -10,5 +10,6 @@
     <string name="confirm">Save</string>
     <string name="add_score">Add score</string>
     <string name="done">Done</string>
-    <string name="app_name">ChickenFooter</string>
+    <string name="app_name">Chicken Footer</string>
+    <string name="delete_game">Delete game</string>
 </resources>

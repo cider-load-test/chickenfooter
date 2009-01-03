@@ -1,18 +1,20 @@
 package net.pillageandplunder.chickenfooter;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 
 public class ChickenFooter extends ListActivity {
+    private static final int INSERT_ID = Menu.FIRST;
+    
 	private ChickenDatabase mDbHelper;
 	private Cursor mGamesCursor;
-	private Button newGame;
 	
     /** Called when the activity is first created. */
     @Override
@@ -23,16 +25,6 @@ public class ChickenFooter extends ListActivity {
         mDbHelper = new ChickenDatabase(this);
         mDbHelper.open();
         fillData();
-        
-        newGame = (Button)findViewById(R.id.new_game);
-        newGame.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-            	long id = mDbHelper.createGame();
-            	viewPlayers(id);
-            	fillData();
-            }
-        });
     }
     
     @Override
@@ -42,7 +34,30 @@ public class ChickenFooter extends ListActivity {
         c.moveToPosition(position);
         viewPlayers(id);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuItem mi = menu.add(0, INSERT_ID, 0, R.string.new_game);
+        mi.setIcon(android.R.drawable.ic_menu_add);
+        return true;
+    }
     
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch(item.getItemId()) {
+        case INSERT_ID:
+            newGame();
+            return true;
+        }
+        
+        return super.onMenuItemSelected(featureId, item);
+    }
+    
+    private void newGame() {
+    	mDbHelper.createGame();
+    	fillData();
+    }
     private void viewPlayers(long id) {
         Intent i = new Intent(this, Players.class);
         i.putExtra("gameId", id);

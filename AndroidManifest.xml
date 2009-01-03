@@ -16,4 +16,4 @@
         <activity android:name=".Scores"></activity>
         <activity android:name=".ScoreNew"></activity>
     </application>
-</manifest> 
+</manifest>

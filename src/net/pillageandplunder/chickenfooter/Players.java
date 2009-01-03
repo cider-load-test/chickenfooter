@@ -4,20 +4,23 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class Players extends ListActivity {
 	private static final int ACTIVITY_PLAYER_NEW=0;
 	private static final int ACTIVITY_PLAYER_SCORES=1;
+    private static final int INSERT_ID = Menu.FIRST;
+    private static final int DELETE_ID = Menu.FIRST + 1;
+
 	
 	private Long mGameId;
 	private ChickenDatabase mDbHelper;
 	private Cursor mPlayersCursor;
-	private Button newPlayer;
-
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,14 +34,6 @@ public class Players extends ListActivity {
         mDbHelper = new ChickenDatabase(this);
         mDbHelper.open();
         fillData();
-        
-        newPlayer = (Button)findViewById(R.id.new_player);
-        newPlayer.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-            	newPlayer();
-            }
-        });
     }
     
     @Override
@@ -46,7 +41,32 @@ public class Players extends ListActivity {
     	super.onListItemClick(l, v, position, id);
         Cursor c = mPlayersCursor;
         c.moveToPosition(position);
-        editPlayer(id, c.getString(1));
+        playerScores(id, c.getString(1));
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuItem mi = menu.add(0, INSERT_ID, 0, R.string.new_player);
+        mi.setIcon(android.R.drawable.ic_menu_add);
+        
+        mi = menu.add(0, DELETE_ID, 0, R.string.delete_game);
+        mi.setIcon(android.R.drawable.ic_menu_delete);
+        
+        return true;
+    }
+    
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch(item.getItemId()) {
+        case INSERT_ID:
+            newPlayer();
+            return true;
+        case DELETE_ID:
+        	deleteGame();
+        	return true;
+        }
+        return super.onMenuItemSelected(featureId, item);
     }
     
     private void fillData() {
@@ -68,28 +88,38 @@ public class Players extends ListActivity {
         startActivityForResult(i, ACTIVITY_PLAYER_NEW);
     }
     
-    private void editPlayer(long id, String name) {
+    private void playerScores(long id, String name) {
         Intent i = new Intent(this, Scores.class);
         i.putExtra("playerId", id);
         i.putExtra("name", name);
         startActivityForResult(i, ACTIVITY_PLAYER_SCORES);
     }
     
+    private void deleteGame() {
+    	mDbHelper.deleteGame(mGameId);
+    	finish();
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        Bundle extras = intent.getExtras();
+
+        Bundle extras = intent == null ? null : intent.getExtras();
         switch(requestCode) {
         case ACTIVITY_PLAYER_NEW:
-            String name = extras.getString("name");
-            mDbHelper.createPlayer(mGameId, name);
-            fillData();
+        	if (extras != null) {
+        		String name = extras.getString("name");
+        		mDbHelper.createPlayer(mGameId, name);
+        		fillData();
+        	}
             break;
         case ACTIVITY_PLAYER_SCORES:
-        	int scoresAdded = extras.getInt("added");
-        	long playerId = extras.getLong("playerId");
-        	mDbHelper.addToPlayerScore(playerId, scoresAdded);
-            fillData();
+        	if (extras != null) {
+        		int scoresAdded = extras.getInt("added");
+        		long playerId = extras.getLong("playerId");
+        		mDbHelper.addToPlayerScore(playerId, scoresAdded);
+        	}
+    		fillData();
             break;
         }
     }    

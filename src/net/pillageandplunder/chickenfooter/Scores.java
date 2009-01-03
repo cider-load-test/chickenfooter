@@ -4,28 +4,25 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class Scores extends ListActivity {
 	private static final int ACTIVITY_SCORE_NEW=0;
+    private static final int INSERT_ID = Menu.FIRST;
 	
 	private Long mPlayerId;
 	private ChickenDatabase mDbHelper;
 	private Cursor mScoresCursor;
-	private Button newScore;
-	private Button done;
 	private TextView mNameText;
-	private int scoresAdded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scores);
         
-        scoresAdded = 0;
         mNameText = (TextView)findViewById(R.id.scores_player_name);
         
         Bundle extras = getIntent().getExtras();
@@ -37,26 +34,24 @@ public class Scores extends ListActivity {
         mDbHelper = new ChickenDatabase(this);
         mDbHelper.open();
         fillData();
-        
-        newScore = (Button)findViewById(R.id.new_score);
-        newScore.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-            	newScore();
-            }
-        });
-        
-        done = (Button)findViewById(R.id.done_scoring);
-        done.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-				Intent mIntent = new Intent();
-				mIntent.putExtra("playerId", mPlayerId);
-				mIntent.putExtra("added", scoresAdded);
-				setResult(RESULT_OK, mIntent);
-				finish();            	
-            }
-        });
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuItem mi = menu.add(0, INSERT_ID, 0, R.string.add_score);
+        mi.setIcon(android.R.drawable.ic_menu_add);
+        return true;
+    }
+    
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch(item.getItemId()) {
+        case INSERT_ID:
+            newScore();
+            return true;
+        }
+        return super.onMenuItemSelected(featureId, item);
     }
     
     private void fillData() {
@@ -81,13 +76,17 @@ public class Scores extends ListActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode != RESULT_OK)
+        	return;
+        
         Bundle extras = intent.getExtras();
         switch(requestCode) {
         case ACTIVITY_SCORE_NEW:
-            int value = Integer.decode(extras.getString("value"));
-            mDbHelper.createScore(mPlayerId, value);
-            scoresAdded += value;
-            fillData();
+        	if (extras != null) {
+        		int value = Integer.decode(extras.getString("value"));
+        		mDbHelper.createScore(mPlayerId, value);
+        		fillData();
+        	}
             break;
         }
     }    
