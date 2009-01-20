@@ -10,7 +10,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 
-public class ChickenFooter extends ListActivity {
+public class Games extends ListActivity {
     private static final int INSERT_ID = Menu.FIRST;
     
 	private ChickenDatabase mDbHelper;
@@ -50,7 +50,6 @@ public class ChickenFooter extends ListActivity {
             newGame();
             return true;
         }
-        
         return super.onMenuItemSelected(featureId, item);
     }
     
@@ -58,6 +57,7 @@ public class ChickenFooter extends ListActivity {
     	mDbHelper.createGame();
     	fillData();
     }
+    
     private void viewPlayers(long id) {
         Intent i = new Intent(this, Players.class);
         i.putExtra("gameId", id);
