@@ -14,6 +14,7 @@ public class Scores extends ListActivity {
     private static final int INSERT_ID = Menu.FIRST;
 	
 	private Long mPlayerId;
+	private String mPlayerName;
 	private ChickenDatabase mDbHelper;
 	private Cursor mScoresCursor;
 	private TextView mNameText;
@@ -28,7 +29,8 @@ public class Scores extends ListActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mPlayerId = extras.getLong("playerId");
-            mNameText.setText(extras.getString("name"));
+            mPlayerName = extras.getString("name");
+            mNameText.setText(mPlayerName);
         }
         
         mDbHelper = new ChickenDatabase(this);
@@ -70,6 +72,7 @@ public class Scores extends ListActivity {
     
     private void newScore() {
         Intent i = new Intent(this, ScoreNew.class);
+        i.putExtra("name", mPlayerName);
         startActivityForResult(i, ACTIVITY_SCORE_NEW);
     }
     

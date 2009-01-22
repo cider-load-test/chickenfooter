@@ -15,14 +15,13 @@ public final class R {
     }
     public static final class id {
         public static final int game1=0x7f050000;
-        public static final int new_player_confirm=0x7f050002;
         public static final int new_player_name=0x7f050001;
-        public static final int new_score_confirm=0x7f050006;
-        public static final int new_score_value=0x7f050005;
-        public static final int player_name1=0x7f050003;
-        public static final int player_score1=0x7f050004;
-        public static final int score_value1=0x7f050008;
-        public static final int scores_player_name=0x7f050007;
+        public static final int new_score_confirm=0x7f050005;
+        public static final int new_score_value=0x7f050004;
+        public static final int player_name1=0x7f050002;
+        public static final int player_score1=0x7f050003;
+        public static final int score_value1=0x7f050007;
+        public static final int scores_player_name=0x7f050006;
     }
     public static final class layout {
         public static final int games_row=0x7f030000;

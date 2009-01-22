@@ -14,6 +14,11 @@ public class ScoreNew extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.score_new);
+		
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+        	setTitle("Add score for " + extras.getString("name"));
+        }
 
 		mValueText = (EditText) findViewById(R.id.new_score_value);
 		Button confirmButton = (Button) findViewById(R.id.new_score_confirm);
