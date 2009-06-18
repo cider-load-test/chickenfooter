@@ -7,17 +7,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class Players extends ListActivity {
-	private static final int ACTIVITY_PLAYER_NEW=0;
-	private static final int ACTIVITY_PLAYER_SCORES=1;
+	private static final int ACTIVITY_PLAYER_NEW = 0;
+	private static final int ACTIVITY_PLAYER_SCORES = 1;
+	private static final int ACTIVITY_SCORE_NEW = 2;
     private static final int INSERT_ID = Menu.FIRST;
     private static final int DELETE_ID = Menu.FIRST + 1;
 
 	
 	private Long mGameId;
+	private Long mPlayerId;
 	private ChickenDatabase mDbHelper;
 	private Cursor mPlayersCursor;
 	
@@ -34,11 +37,26 @@ public class Players extends ListActivity {
         mDbHelper = new ChickenDatabase(this);
         mDbHelper.open();
         fillData();
+        
+        ListView lv = getListView();
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        	@Override
+			public boolean onItemLongClick(AdapterView<?> av, View v, int pos, long id) {
+        		onListItemLongClick(v, pos, id);
+				return false;
+			}
+		}); 
     }
     
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
     	super.onListItemClick(l, v, position, id);
+        Cursor c = mPlayersCursor;
+        c.moveToPosition(position);
+        newScore(id, c.getString(1));
+    }
+
+    protected void onListItemLongClick(View v, int position, long id) {
         Cursor c = mPlayersCursor;
         c.moveToPosition(position);
         playerScores(id, c.getString(1));
@@ -100,6 +118,13 @@ public class Players extends ListActivity {
     	finish();
     }
     
+    private void newScore(long id, String name) {
+    	Intent i = new Intent(this, ScoreNew.class);
+    	i.putExtra("name", name);
+    	mPlayerId = id;
+        startActivityForResult(i, ACTIVITY_SCORE_NEW);
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -114,13 +139,16 @@ public class Players extends ListActivity {
         	}
             break;
         case ACTIVITY_PLAYER_SCORES:
-        	if (extras != null) {
-        		int scoresAdded = extras.getInt("added");
-        		long playerId = extras.getLong("playerId");
-        		mDbHelper.addToPlayerScore(playerId, scoresAdded);
-        	}
     		fillData();
             break;
-        }
+        case ACTIVITY_SCORE_NEW:
+        	if (extras != null) {
+        		int value = Integer.decode(extras.getString("value"));
+        		mDbHelper.createScore(mPlayerId, value);
+        		mPlayerId = null;
+        		fillData();
+        	}
+            break;
+        }        
     }    
 }
