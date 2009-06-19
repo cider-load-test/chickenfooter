@@ -86,9 +86,13 @@ public class Scores extends ListActivity {
         switch(requestCode) {
         case ACTIVITY_SCORE_NEW:
         	if (extras != null) {
-        		int value = Integer.decode(extras.getString("value"));
-        		mDbHelper.createScore(mPlayerId, value);
-        		fillData();
+        		try {
+            		int value = Integer.decode(extras.getString("value"));
+            		mDbHelper.createScore(mPlayerId, value);
+            		fillData();
+        		}
+        		catch (NumberFormatException e) {
+        		}
         	}
             break;
         }

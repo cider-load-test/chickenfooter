@@ -14,7 +14,7 @@ import android.widget.SimpleCursorAdapter;
 public class Players extends ListActivity {
 	private static final int ACTIVITY_PLAYER_NEW = 0;
 	private static final int ACTIVITY_PLAYER_SCORES = 1;
-	private static final int ACTIVITY_SCORE_NEW = 2;
+	private static final int ACTIVITY_PLAYER_NEW_SCORE = 2;
     private static final int INSERT_ID = Menu.FIRST;
     private static final int DELETE_ID = Menu.FIRST + 1;
 
@@ -122,7 +122,7 @@ public class Players extends ListActivity {
     	Intent i = new Intent(this, ScoreNew.class);
     	i.putExtra("name", name);
     	mPlayerId = id;
-        startActivityForResult(i, ACTIVITY_SCORE_NEW);
+        startActivityForResult(i, ACTIVITY_PLAYER_NEW_SCORE);
     }
     
     @Override
@@ -141,12 +141,15 @@ public class Players extends ListActivity {
         case ACTIVITY_PLAYER_SCORES:
     		fillData();
             break;
-        case ACTIVITY_SCORE_NEW:
+        case ACTIVITY_PLAYER_NEW_SCORE:
         	if (extras != null) {
-        		int value = Integer.decode(extras.getString("value"));
-        		mDbHelper.createScore(mPlayerId, value);
-        		mPlayerId = null;
-        		fillData();
+        		try {
+            		int value = Integer.decode(extras.getString("value"));
+            		mDbHelper.createScore(mPlayerId, value);
+            		fillData();
+        		}
+        		catch (NumberFormatException e) {
+        		}
         	}
             break;
         }        

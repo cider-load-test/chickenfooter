@@ -12,4 +12,6 @@
     <string name="done">Done</string>
     <string name="app_name">Chicken Footer</string>
     <string name="delete_game">Delete game</string>
+<string name="message_ok">OK</string>
+<string name="message_back">Back</string>
 </resources>
