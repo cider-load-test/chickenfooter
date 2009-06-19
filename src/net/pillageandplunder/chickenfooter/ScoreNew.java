@@ -34,7 +34,8 @@ public class ScoreNew extends Activity {
         ((Button)findViewById(R.id.back)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	String text = mValueText.getText().toString();
-            	mValueText.setText(text.substring(0, text.length()-1));
+            	if (text.length() > 0)
+            		mValueText.setText(text.substring(0, text.length()-1));
             }
         });
         
