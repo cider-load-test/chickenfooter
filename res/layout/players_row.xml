@@ -10,7 +10,7 @@
     	android:id="@+id/player_name1"
     	android:layout_width="200sp"
     	android:layout_height="wrap_content"
-    	android:textSize="30sp"
+    	android:textSize="25sp"
     	android:text="Player"
     	android:gravity="left"
     />
@@ -18,7 +18,7 @@
     	android:id="@+id/player_score1"
     	android:layout_width="80sp"
     	android:layout_height="wrap_content"
-    	android:textSize="30sp"
+    	android:textSize="25sp"
 		android:text="123"
 		android:gravity="right"
     />
